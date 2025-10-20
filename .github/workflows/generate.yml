@@ -21,7 +21,11 @@ jobs:
       - name: Install deps
         run: |
           sudo apt-get update && sudo apt-get install -y ffmpeg
-          npm ci || npm i --no-audit --no-fund
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm i --no-audit --no-fund
+          fi
 
       - name: Compute weekday (JST)
         id: wd
