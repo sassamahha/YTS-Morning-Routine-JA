@@ -1,0 +1,10 @@
+font: assets/fonts/NotoSansJP-Regular.ttf
+fontsize: 58
+color: "white"
+line_spacing: 8
+x: "(w-text_w)/2"
+y: "(h-text_h)/2"
+shadowcolor: "black@0.0"
+shadowx: 0
+shadowy: 0
+include_title: true
