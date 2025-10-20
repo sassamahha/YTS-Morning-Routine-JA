@@ -183,7 +183,9 @@ async function renderOne(mdPath) {
 
   // 背景：ぼかし無し。1080x1920 カバー
   const vBase = [
-    "[0:v]scale=1080:1920:force_original_aspect_ratio=cover,crop=1080:1920,setsar=1,format=yuv420p[v0]"
+    "[0:v]" +
+    "scale=if(gt(a,0.5625),-2,1080):if(gt(a,0.5625),1920,-2)," + // a=iw/ih
+    "crop=1080:1920:(in_w-1080)/2:(in_h-1920)/2,setsar=1,format=yuv420p[v0]"
   ];
 
   // テキスト一括表示（装飾なし）
