@@ -130,8 +130,14 @@ async function renderOne(mdPath) {
   const outDir = path.join("videos", "queue", dateStr);
   await fsp.mkdir(outDir, { recursive: true });
 
-  const bg = meta.bg ? path.join(BG_DIR, meta.bg) : pickRandom(BG_DIR, /\.(jpe?g|png|mp4|mov|webm)$/i);
-  if (!bg || !fs.existsSync(bg)) throw new Error(`No background in ${BG_DIR}`);
+  let bg = meta.bg ? path.join(BG_DIR, meta.bg) : "";
+    if (!bg || !fs.existsSync(bg)) {
+      // 指定が無い or 見つからない → assets/bg からランダム
+      bg = pickRandom(BG_DIR, /\.(jpe?g|png|mp4|mov|webm)$/i);
+    }
+    if (!bg || !fs.existsSync(bg)) {
+      throw new Error(`No background in ${BG_DIR}`); // 本当に空なら落とす
+    }
 
   const bgm = meta.bgm ? path.join(BGM_DIR, meta.bgm) : pickRandom(BGM_DIR, /\.(mp3|wav)$/i);
   const dur = meta.dur;
