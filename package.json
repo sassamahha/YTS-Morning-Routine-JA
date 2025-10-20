@@ -1,0 +1,11 @@
+{
+  "name": "morning-comfort-gen",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "node scripts/render.js"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3"
+  }
+}

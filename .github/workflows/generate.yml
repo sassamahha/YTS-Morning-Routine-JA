@@ -1,0 +1,39 @@
+name: Generate (queue only)
+
+on:
+  # schedule:
+  #   - cron: "0 4 * * *"   # 13:00 JST
+  workflow_dispatch: {}
+
+jobs:
+  gen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+
+      - name: Install deps
+        run: |
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+          npm ci || npm i --no-audit --no-fund
+
+      - name: Compute weekday (JST)
+        id: wd
+        run: echo "WD=$(TZ=Asia/Tokyo date +%a | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Render morning (2)
+        run: node scripts/render.js --slot=morning --weekday=${{ env.WD }} --max=2 --dur=12 --tz=Asia/Tokyo
+
+      - name: Render night (2)
+        run: node scripts/render.js --slot=night   --weekday=${{ env.WD }} --max=2 --dur=12 --tz=Asia/Tokyo
+
+      - name: Commit queued videos
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add videos/queue/** || true
+          git commit -m "queue: $(date -u +%F) morning/night" || echo "nothing to commit"
+          git push || true
